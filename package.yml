@@ -1,0 +1,8 @@
+---
+- hosts: ip-172-31-84-163.ec2.internal
+  become: true
+  tasks:
+  - name: tree packg
+    apt:
+     name: tree
+     state: present

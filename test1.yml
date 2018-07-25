@@ -1,0 +1,12 @@
+#update packages 
+#install git 
+
+---
+- hosts: all
+  become: true
+  tasks:
+  - name: upadte packages
+    apt:
+     name: update_cache
+     state: present 
+
