@@ -1,0 +1,58 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+  - name: upadte package
+    apt:
+     update_cache: yes
+     state: present
+    when: ansible_os_family == "Debian"
+  - name: install apache 
+    apt:
+     name: apache2
+     state: present
+    when: ansible_os_family == "Debian"
+    notify: 
+     - restart apache
+
+  - name: install httpd
+    yum:
+     name: httpd
+     state: present
+    notify:
+     - restart httpd
+    when: ansible_os_family == "RedHat"
+
+  - name: install php packages
+    apt: 
+     name: "{{ item }}"
+     state: present
+    with_items:
+      - php
+      - libapache2-mod-php
+      - php-mcrypt
+      - php-mysql
+    when: ansible_os_family == "Debian"
+    notify: 
+     - restart apache
+  - name: install php on redhat
+    yum:
+     name: "{{ item }}"
+     state: present
+    with_items:
+      - php 
+      - php-mysql
+    notify:
+     - restart httpd
+    when: ansible_os_family == "RedHat"
+  handlers:
+  - name: restart apache
+    service:
+     name: apache2
+     state: restarted
+    when: ansible_os_family == "Debian"
+  - name: restart httpd
+    service:
+     name: httpd
+     state: restarted
+    when: ansible_os_family == "RedHat"
